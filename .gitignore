@@ -14,6 +14,7 @@ utilization/
 gpu_utilization/
 build/
 dataset/
+HugeCTR_data/
 data/
 NvTabular_workspace/
 kaggle_access_fig/

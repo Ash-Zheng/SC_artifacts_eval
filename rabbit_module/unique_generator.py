@@ -7,10 +7,13 @@ from tqdm import tqdm
 
 import sys
 from random_dataloader import random_dataloader, in_memory_dataloader
+import argparse
 
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--dataset', type=str, default="kaggle") 
 parser.add_argument('--nDev', type=int, default=1) 
+parser.add_argument('--batch_size', type=int, default=4096) 
+
 
 
 class unique_generator:
@@ -103,14 +106,15 @@ if __name__ == "__main__":
     # kaggle avazu terabyte kaggle_reordered avazu_reordered terabyte_reordered
     dataset = args.dataset
     nDev = args.nDev
+    batch_size = args.batch_size
 
     if dataset == "avazu" or dataset == "avazu_reordered":
         table_num = 20
     else:
         table_num = 26
 
-    train_iter = in_memory_dataloader(4096*nDev,0,dataset=dataset)
-    unique_gen = unique_generator(batch_size=4096, nDev=nDev, table_num=table_num, rank=0, dataloader=train_iter, generate=True, dataset=dataset)
+    train_iter = in_memory_dataloader(batch_size*nDev,0,dataset=dataset)
+    unique_gen = unique_generator(batch_size=batch_size, nDev=nDev, table_num=table_num, rank=0, dataloader=train_iter, generate=True, dataset=dataset)
 
 
 

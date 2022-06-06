@@ -30,29 +30,29 @@ class in_memory_dataloader:
         base_dir = "/workspace/SC_artifacts_eval/Access_Index/"
 
         if dataset == "kaggle":
-            self.dense = torch.load(base_dir+"kaggle/training_data/dense.pt").to(device)
-            self.sparse = torch.load(base_dir+"kaggle/training_data/sparse.pt").to(device)
-            self.label = torch.load(base_dir+"kaggle/training_data/label.pt").to(device)
+            self.dense = torch.load(base_dir+"kaggle/training_data/dense.pt", map_location=torch.device(device))
+            self.sparse = torch.load(base_dir+"kaggle/training_data/sparse.pt", map_location=torch.device(device))
+            self.label = torch.load(base_dir+"kaggle/training_data/label.pt", map_location=torch.device(device))
         elif dataset == "avazu":
-            self.dense = torch.load(base_dir+"avazu/training_data/dense.pt").to(device)
-            self.sparse = torch.load(base_dir+"avazu/training_data/sparse.pt").to(device)
-            self.label = torch.load(base_dir+"avazu/training_data/label.pt").to(device)
+            self.dense = torch.load(base_dir+"avazu/training_data/dense.pt", map_location=torch.device(device))
+            self.sparse = torch.load(base_dir+"avazu/training_data/sparse.pt", map_location=torch.device(device))
+            self.label = torch.load(base_dir+"avazu/training_data/label.pt", map_location=torch.device(device))
         elif dataset == "terabyte":
-            self.dense = torch.load(base_dir+"terabyte/training_data/dense.pt").to(device)
-            self.sparse = torch.load(base_dir+"terabyte/training_data/sparse.pt").to(device)
-            self.label = torch.load(base_dir+"terabyte/training_data/label.pt").to(device)
+            self.dense = torch.load(base_dir+"terabyte/training_data/dense.pt", map_location=torch.device(device))
+            self.sparse = torch.load(base_dir+"terabyte/training_data/sparse.pt", map_location=torch.device(device))
+            self.label = torch.load(base_dir+"terabyte/training_data/label.pt", map_location=torch.device(device))
         elif dataset == "kaggle_reordered":
-            self.dense = torch.load(base_dir+"kaggle/training_data/reordered_dense.pt").to(device)
-            self.sparse = torch.load(base_dir+"kaggle/training_data/reordered_sparse.pt").to(device)
-            self.label = torch.load(base_dir+"kaggle/training_data/reordered_label.pt").to(device)
+            self.dense = torch.load(base_dir+"kaggle/training_data/reordered_dense.pt", map_location=torch.device(device))
+            self.sparse = torch.load(base_dir+"kaggle/training_data/reordered_sparse.pt", map_location=torch.device(device))
+            self.label = torch.load(base_dir+"kaggle/training_data/reordered_label.pt", map_location=torch.device(device))
         elif dataset == "avazu_reordered":
-            self.dense = torch.load(base_dir+"avazu/training_data/reordered_dense.pt").to(device)
-            self.sparse = torch.load(base_dir+"avazu/training_data/reordered_sparse.pt").to(device)
-            self.label = torch.load(base_dir+"avazu/training_data/reordered_label.pt").to(device)
+            self.dense = torch.load(base_dir+"avazu/training_data/reordered_dense.pt", map_location=torch.device(device))
+            self.sparse = torch.load(base_dir+"avazu/training_data/reordered_sparse.pt", map_location=torch.device(device))
+            self.label = torch.load(base_dir+"avazu/training_data/reordered_label.pt", map_location=torch.device(device))
         elif dataset == "terabyte_reordered":
-            self.dense = torch.load(base_dir+"terabyte/training_data/reordered_dense.pt").to(device)
-            self.sparse = torch.load(base_dir+"terabyte/training_data/reordered_sparse.pt").to(device)
-            self.label = torch.load(base_dir+"terabyte/training_data/reordered_label.pt").to(device)
+            self.dense = torch.load(base_dir+"terabyte/training_data/reordered_dense.pt", map_location=torch.device(device))
+            self.sparse = torch.load(base_dir+"terabyte/training_data/reordered_sparse.pt", map_location=torch.device(device))
+            self.label = torch.load(base_dir+"terabyte/training_data/reordered_label.pt", map_location=torch.device(device))
         else:
             print("Error dataset name")
             exit(0)
@@ -73,6 +73,124 @@ class in_memory_dataloader:
         self.cnt += 1
 
         return label, sparse, desnse
+    
+    def reset(self):
+        self.cnt = 0
+
+
+class in_memory_dataloader_cpu:
+    def __init__(self, batch_size, device, dataset="kaggle"):
+        # torch.manual_seed(1234)
+        # np.random.seed(1234)
+        self.batch_size = batch_size
+        base_dir = "/workspace/SC_artifacts_eval/Access_Index/"
+
+        if dataset == "kaggle":
+            self.dense = torch.load(base_dir+"kaggle/training_data/dense.pt", map_location=torch.device(device))
+            self.sparse = torch.load(base_dir+"kaggle/training_data/sparse.pt").to('cpu')
+            self.label = torch.load(base_dir+"kaggle/training_data/label.pt", map_location=torch.device(device))
+        elif dataset == "avazu":
+            self.dense = torch.load(base_dir+"avazu/training_data/dense.pt", map_location=torch.device(device))
+            self.sparse = torch.load(base_dir+"avazu/training_data/sparse.pt").to('cpu')
+            self.label = torch.load(base_dir+"avazu/training_data/label.pt", map_location=torch.device(device))
+        elif dataset == "terabyte":
+            self.dense = torch.load(base_dir+"terabyte/training_data/dense.pt", map_location=torch.device(device))
+            self.sparse = torch.load(base_dir+"terabyte/training_data/sparse.pt").to('cpu')
+            self.label = torch.load(base_dir+"terabyte/training_data/label.pt", map_location=torch.device(device))
+        elif dataset == "kaggle_reordered":
+            self.dense = torch.load(base_dir+"kaggle/training_data/reordered_dense.pt", map_location=torch.device(device))
+            self.sparse = torch.load(base_dir+"kaggle/training_data/reordered_sparse.pt").to('cpu')
+            self.label = torch.load(base_dir+"kaggle/training_data/reordered_label.pt", map_location=torch.device(device))
+        elif dataset == "avazu_reordered":
+            self.dense = torch.load(base_dir+"avazu/training_data/reordered_dense.pt", map_location=torch.device(device))
+            self.sparse = torch.load(base_dir+"avazu/training_data/reordered_sparse.pt").to('cpu')
+            self.label = torch.load(base_dir+"avazu/training_data/reordered_label.pt", map_location=torch.device(device))
+        elif dataset == "terabyte_reordered":
+            self.dense = torch.load(base_dir+"terabyte/training_data/reordered_dense.pt", map_location=torch.device(device))
+            self.sparse = torch.load(base_dir+"terabyte/training_data/reordered_sparse.pt").to('cpu')
+            self.label = torch.load(base_dir+"terabyte/training_data/reordered_label.pt", map_location=torch.device(device))
+        else:
+            print("Error dataset name")
+            exit(0)
+
+        self.num_batch = self.label.shape[0] / self.batch_size
+        self.cnt = 0
+
+    def next(self):
+        if self.cnt >= self.num_batch-1:
+            self.cnt = 0
+
+        start = self.cnt * self.batch_size
+        end = start + self.batch_size
+
+        desnse = self.dense[start:end]
+        label = self.label[start:end]
+        sparse = self.sparse[:,start:end]
+        self.cnt += 1
+
+        return label, sparse, desnse
+    
+    def reset(self):
+        self.cnt = 0
+
+class in_memory_dataloader_cpu_gpu:
+    def __init__(self, batch_size, device, dataset="kaggle"):
+        # torch.manual_seed(1234)
+        # np.random.seed(1234)
+        self.batch_size = batch_size
+        base_dir = "/workspace/SC_artifacts_eval/Access_Index/"
+
+        if dataset == "kaggle":
+            self.dense = torch.load(base_dir+"kaggle/training_data/dense.pt", map_location=torch.device(device))
+            self.sparse = torch.load(base_dir+"kaggle/training_data/sparse.pt").to('cpu')
+            self.sparse_gpu = torch.load(base_dir+"kaggle/training_data/sparse.pt", map_location=torch.device(device))
+            self.label = torch.load(base_dir+"kaggle/training_data/label.pt", map_location=torch.device(device))
+        elif dataset == "avazu":
+            self.dense = torch.load(base_dir+"avazu/training_data/dense.pt", map_location=torch.device(device))
+            self.sparse = torch.load(base_dir+"avazu/training_data/sparse.pt").to('cpu')
+            self.sparse_gpu = torch.load(base_dir+"avazu/training_data/sparse.pt", map_location=torch.device(device))
+            self.label = torch.load(base_dir+"avazu/training_data/label.pt", map_location=torch.device(device))
+        elif dataset == "terabyte":
+            self.dense = torch.load(base_dir+"terabyte/training_data/dense.pt", map_location=torch.device(device))
+            self.sparse = torch.load(base_dir+"terabyte/training_data/sparse.pt").to('cpu')
+            self.sparse_gpu = torch.load(base_dir+"terabyte/training_data/sparse.pt", map_location=torch.device(device))
+            self.label = torch.load(base_dir+"terabyte/training_data/label.pt", map_location=torch.device(device))
+        elif dataset == "kaggle_reordered":
+            self.dense = torch.load(base_dir+"kaggle/training_data/reordered_dense.pt", map_location=torch.device(device))
+            self.sparse = torch.load(base_dir+"kaggle/training_data/reordered_sparse.pt").to('cpu')
+            self.sparse_gpu = torch.load(base_dir+"kaggle/training_data/sparse.pt", map_location=torch.device(device))
+            self.label = torch.load(base_dir+"kaggle/training_data/reordered_label.pt", map_location=torch.device(device))
+        elif dataset == "avazu_reordered":
+            self.dense = torch.load(base_dir+"avazu/training_data/reordered_dense.pt", map_location=torch.device(device))
+            self.sparse = torch.load(base_dir+"avazu/training_data/reordered_sparse.pt").to('cpu')
+            self.sparse_gpu = torch.load(base_dir+"avazu/training_data/sparse.pt", map_location=torch.device(device))
+            self.label = torch.load(base_dir+"avazu/training_data/reordered_label.pt", map_location=torch.device(device))
+        elif dataset == "terabyte_reordered":
+            self.dense = torch.load(base_dir+"terabyte/training_data/reordered_dense.pt", map_location=torch.device(device))
+            self.sparse = torch.load(base_dir+"terabyte/training_data/reordered_sparse.pt").to('cpu')
+            self.sparse_gpu = torch.load(base_dir+"terabyte/training_data/sparse.pt", map_location=torch.device(device))
+            self.label = torch.load(base_dir+"terabyte/training_data/reordered_label.pt", map_location=torch.device(device))
+        else:
+            print("Error dataset name")
+            exit(0)
+
+        self.num_batch = self.label.shape[0] / self.batch_size
+        self.cnt = 0
+
+    def next(self):
+        if self.cnt >= self.num_batch-1:
+            self.cnt = 0
+
+        start = self.cnt * self.batch_size
+        end = start + self.batch_size
+
+        desnse = self.dense[start:end]
+        label = self.label[start:end]
+        sparse = self.sparse[:,start:end]
+        sparse_gpu = self.sparse_gpu[:,start:end]
+        self.cnt += 1
+
+        return label, sparse, sparse_gpu, desnse
     
     def reset(self):
         self.cnt = 0
