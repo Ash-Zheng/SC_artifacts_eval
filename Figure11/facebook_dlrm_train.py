@@ -85,5 +85,5 @@ if __name__ == "__main__":
     
     print("Result saved to out.log")
     with open('out.log', 'a') as f:
-        f.write("dlrm, {}, time: {}\n".format(dataset, end-start))
+        f.write("dlrm, {}, time: {:.3f}\n".format(dataset, end-start))
 

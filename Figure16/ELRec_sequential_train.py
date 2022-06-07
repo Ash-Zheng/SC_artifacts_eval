@@ -103,6 +103,7 @@ if __name__ == "__main__":
     train_iter = in_memory_dataloader(batch_size, 0, dataset=dataset)
     train_iter_local = in_memory_dataloader(batch_size, 0, dataset=dataset)
     train_iter_update = in_memory_dataloader(batch_size, 0, dataset=dataset)
+    unique_gen_gpu = unique_generator(batch_size=batch_size, nDev=1, table_num=table_num, rank=0, dataloader=train_iter, generate=False, dataset=dataset)
 
     max_length = unique_gen_gpu.max_length()
     receive_emb_list = [torch.zeros((max_length[i],feature_size),device=0) for i in range(table_num)]
@@ -113,7 +114,6 @@ if __name__ == "__main__":
         feature_size,
         table_length,
         device,
-        threshold=99999999,
     )
 
     MLP_layers = MLP_Layers(

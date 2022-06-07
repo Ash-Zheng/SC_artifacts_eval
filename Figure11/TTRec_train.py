@@ -46,7 +46,7 @@ if __name__ == "__main__":
         table_num = 26
         feature_size = 64
         dense_num = 13
-        top_num = 367
+        top_num = 415
         table_length = [33121475, 30875, 15297, 7296, 19902, 4, 6519, 1340, 63, 20388174, 945108, 253624, 11, 2209, 10074, 75, 4, 964, 15, 39991895, 7312994, 28182799, 347447, 11111, 98, 35]
 
     batch_size = 4096
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     dlrm = TT_DLRM_Net(
         feature_size, # sparse feature size
         table_length,
-        [dense_num, 512, 256, 64, 16],
+        [dense_num, 512, 256, 64, feature_size],
         [top_num, 512, 256, 1],
         device,
         128
@@ -87,5 +87,5 @@ if __name__ == "__main__":
     
     print("Result saved to out.log")
     with open('out.log', 'a') as f:
-        f.write("TTRec, {}, time: {}\n".format(dataset, end-start))
+        f.write("TTRec, {}, time: {:.3f}\n".format(dataset, end-start))
 

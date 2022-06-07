@@ -49,9 +49,7 @@ class TT_DLRM_Net(nn.Module):
             elif m == 64:
                 q_shape = [4, 4, 4]
 
-            # if n > 3000000:
             if n > 1000000:
-            # if n < 0 :
                 EE = TTEmbeddingBag(
                     num_embeddings=n,
                     embedding_dim=m,
@@ -63,7 +61,6 @@ class TT_DLRM_Net(nn.Module):
                     weight_dist="uniform",
                     learning_rate=0.1
                 )
-                print(EE.tt_p_shapes)
                 self.emb_tag.append(1)
             else:
                 EE = nn.EmbeddingBag(n, m, mode="sum", sparse=True)
@@ -75,7 +72,6 @@ class TT_DLRM_Net(nn.Module):
                 self.emb_tag.append(0)
             
             emb_l.append(EE)
-        print(self.emb_tag)
         return emb_l
 
     def __init__(
