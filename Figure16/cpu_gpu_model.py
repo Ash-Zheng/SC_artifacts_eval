@@ -4,10 +4,10 @@ from torch._ops import ops
 from torch.autograd.profiler import record_function
 from torch.nn.parallel.parallel_apply import parallel_apply
 from torch.nn.parallel.replicate import replicate
-from torch.nn.parallel.scatter_gather import gather, scatter
 from torch.nn.parameter import Parameter
 import numpy as np
 import sys
+from torch_scatter import scatter, segment_coo
 
 sys.path.append('/workspace/SC_artifacts_eval/models/Efficient_TT')
 from efficient_tt import Eff_TTEmbedding
@@ -53,7 +53,7 @@ class EMB_Tables(nn.Module):
         self.device = device
         self.dim_feature = dim_feature
         self.emb_l = self.create_emb(dim_feature, list_emb)
-        print("num_emb:", len(self.emb_idx), "idx:", self.emb_idx)
+        # print("num_emb:", len(self.emb_idx), "idx:", self.emb_idx)
     
     def forward(self, lS_i, pick=None):
         ly = []
@@ -104,16 +104,29 @@ class EMB_Tables(nn.Module):
                 index = index[pick]
             unique, inverse = index.unique(sorted=True, return_inverse=True)
             E = self.emb_l[idx]
-
+            
             V = E.weight.data[unique].to(self.device)
             ly.append(V)
+            # inverse_list.append(inverse.to(self.device))
+            # unique_list.append(unique.to(self.device))
             inverse_list.append(inverse)
             unique_list.append(unique)
             idx += 1
         
         # ly = torch.stack(ly).to(self.device)
         return ly, unique_list, inverse_list
+    
+    def unique_get(self, unique_idx):
+        ly = []
+        idx = 0
+        for i in self.emb_idx:
+            index = unique_idx[i]
+            E = self.emb_l[idx]
+            V = E.weight.data[index].squeeze().to(self.device)
+            ly.append(V)
+            idx += 1
 
+        return ly
 
     def update(self, index, embeddings):
         # for i in range(len(embeddings)):
@@ -122,6 +135,25 @@ class EMB_Tables(nn.Module):
             self.emb_l[idx].weight.data[index[i].squeeze()] = embeddings[idx].squeeze().cpu()
             idx += 1
 
+    def scatter_update(self, inverse, unique, grad, receive_emb_list, learning_rate=0.1):
+        idx = 0
+        grad = grad * learning_rate
+        for i in self.emb_idx:
+            scatter(grad[i], inverse[:,i], dim=0, out=receive_emb_list[i],reduce="sum")
+            self.emb_l[idx].weight.data[unique[i]] = receive_emb_list[i][0:len(unique[i])].cpu()
+            receive_emb_list[i].zero_()
+            idx += 1
+
+    def scatter_update_list(self, inverse, unique, grad, receive_emb_list, learning_rate=0.1):
+        idx = 0
+        grad = grad * learning_rate
+        for i in self.emb_idx:
+            scatter(grad[i], inverse[i], dim=0, out=receive_emb_list[i],reduce="sum")
+            self.emb_l[idx].weight.data[unique[i]] = receive_emb_list[i][0:len(unique[i])].cpu()
+            receive_emb_list[i].zero_()
+            idx += 1
+
+    
     def print_size(self):
         _sum = 0
         size_list = []
@@ -183,12 +215,19 @@ class MLP_Layers(nn.Module):
 
     def apply_mlp(self, x, layers):
         return layers(x)
+    
 
     def interact_features(self, x, ly):
         if self.arch_interaction_op == "dot":
             # concatenate dense and sparse features
             (batch_size, d) = x.shape
-            T = torch.cat([x] + ly, dim=1).view((batch_size, -1, d))
+
+            (emb_num,_,_) = ly.shape # tensor
+            ly = ly.transpose(1,0).reshape(batch_size,emb_num*d) # tensor
+            T = torch.cat((x,ly),dim=1).view((batch_size, -1, d)) # tensor
+
+            # T = torch.cat([x] + ly, dim=1).view((batch_size, -1, d)) # list
+
             Z = torch.bmm(T, torch.transpose(T, 1, 2))
             _, ni, nj = Z.shape
             offset = 0

@@ -100,6 +100,60 @@ class unique_generator:
         max_length = self.inverse[-1]
         return max_length
 
+
+class unique_generator_cpu:
+    def __init__(self, batch_size, nDev, table_num, rank, dataloader, dataset="kaggle"):
+        self.batch_size = batch_size
+        self.nDev = nDev
+        self.total_batch_size = batch_size * nDev
+        self.table_num = table_num
+        self.rank = rank
+        self.dataset = dataset
+        self.num_batch = int(dataloader.num_batch)
+        self.inverse = None
+        self.unique = []
+        self.unique_cpu = []
+        self.index = []
+        self.unique_list = [[] for _ in range(self.num_batch)]
+        self.unique_list_cpu = [[] for _ in range(self.num_batch)]
+        self.cnt = 0
+
+      
+        input_file = "/workspace/SC_artifacts_eval/Access_Index/{}/unique/inverse_{}_{}.pt".format(self.dataset, batch_size, nDev)
+        self.inverse = torch.load(input_file).to(self.rank)
+        for i in range(self.table_num):
+            file_unique = '/workspace/SC_artifacts_eval/Access_Index/{}/unique/unique_{}_{}_{}.pt'.format(self.dataset, self.batch_size, self.nDev, i)
+            file_index = '/workspace/SC_artifacts_eval/Access_Index/{}/unique/index_{}_{}_{}.pt'.format(self.dataset, self.batch_size, self.nDev, i)
+            self.unique.append(torch.load(file_unique).to(self.rank))
+            self.unique_cpu.append(torch.load(file_unique).to('cpu'))
+            self.index.append(torch.load(file_index).to(self.rank))
+
+        for i in range(self.num_batch):
+            for j in range(self.table_num):
+                start = self.index[j][i]
+                end = self.index[j][i+1]
+                self.unique_list[i].append(self.unique[j][start:end])
+                self.unique_list_cpu[i].append(self.unique_cpu[j][start:end])
+
+    def next(self):
+        if self.cnt >= self.num_batch-1:
+            self.cnt = 0
+
+        start = self.cnt * self.total_batch_size
+        end = start + self.total_batch_size
+        inverse = self.inverse[start:end]
+        unique = self.unique_list[self.cnt]
+        unique_cpu = self.unique_list_cpu[self.cnt]
+
+        self.cnt += 1
+
+        return unique, unique_cpu, inverse
+
+    def max_length(self):
+        max_length = self.inverse[-1]
+        return max_length
+
+
 if __name__ == "__main__":
     args = parser.parse_args()
 

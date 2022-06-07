@@ -85,5 +85,5 @@ if __name__ == "__main__":
     
     print("Result saved to out.log")
     with open('out.log', 'a') as f:
-        f.write("dlrm, {}, training_time: {}\n".format(dataset, end-start))
+        f.write("dlrm, {}, training_time:{:.3f}, throughput:{:.3f}\n".format(args.dataset, end-start, num_iters/(end-start)))
 

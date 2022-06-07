@@ -13,6 +13,8 @@ To run the docker images, please using the following commands:
 docker run --gpus=all -it --cap-add SYS_NICE -v $$<your folder>$$:/workspace/SC_artifacts_eval -w /workspace/SC_artifacts_eval happy233/zheng_dlrm:latest
 docker run --gpus=all -it --cap-add SYS_NICE -v $$<your folder>$$/Figure13:/workspace/HugeCTR -w /workspace/HugeCTR zhengwang0122/dlrm_hugectr:latest
 ```
+docker run --gpus=all -it --cap-add SYS_NICE -v /home/zhengw/workspace/SC_artifacts_eval:/workspace/SC_artifacts_eval -w /workspace/SC_artifacts_eval zhengwang0122/dlrm_hugectr:latest
+pip install torch==1.7.1+cu110 torchvision==0.8.2+cu110 torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
 
 Examples:
 ```
