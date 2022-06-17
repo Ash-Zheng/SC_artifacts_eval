@@ -11,10 +11,10 @@ nDev = args.nDev
 
 if nDev == 2:
     vvgpu = [[0, 1]]
-    workspace_size_per_gpu_in_mb = 12000
+    workspace_size_per_gpu_in_mb = 14000
 elif nDev == 4:
     vvgpu = [[0, 1, 2, 3]]
-    workspace_size_per_gpu_in_mb = 6400
+    workspace_size_per_gpu_in_mb = 7000
 
 
 solver = hugectr.CreateSolver(max_eval_batches = 70,
@@ -59,7 +59,7 @@ model.add(hugectr.SparseEmbedding(embedding_type = hugectr.Embedding_t.Distribut
 model.add(hugectr.DenseLayer(layer_type = hugectr.Layer_t.Reshape,
                             bottom_names = ["sparse_embedding1"],
                             top_names = ["interaction1"],
-                            leading_dim=1,
+                            leading_dim=128,
                             ))
 
 model.add(hugectr.DenseLayer(layer_type = hugectr.Layer_t.InnerProduct,
