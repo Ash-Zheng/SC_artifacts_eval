@@ -151,4 +151,12 @@ cd /workspace/SC_artifacts_eval/rabbit_module/
 ./3_save_training_data.sh
 ```
 
-### 
+### Reference
+We use some codes from the following repos:
+* [Facebool DLRM](https://github.com/facebookresearch/dlrm) 
+* [FAE](https://github.com/Lab-Gattaca-UBC/Accelerating-RecSys-Training)
+* [TT-Rec](https://github.com/facebookresearch/FBTT-Embedding)
+* [TorchRec](https://github.com/pytorch/torchrec)
+* [HugeCTR](https://github.com/NVIDIA-Merlin/HugeCTR)
+
+
