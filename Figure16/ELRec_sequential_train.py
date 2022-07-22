@@ -40,13 +40,16 @@ def generate_unique(table_num, sparse):
     return unique_list, inverse_list
 
 
-def mlp_process(num_iters, warm_up_iters, emb_q, grad_q, MLP_layers, loss_fn, optimizer, train_iter, unique_gen_gpu):
+def mlp_process(num_iters, warm_up_iters, emb_q, grad_q, MLP_layers, loss_fn, optimizer, train_iter, TT_tables):
     for i in range(0, warm_up_iters):
         emb = emb_q.get()
         label, sparse, dense = train_iter.next()
         emb.requires_grad = True
         
-        z = MLP_layers(dense, emb)
+        tt_emb = TT_tables(sparse)
+        all_emb = torch.cat([emb,torch.stack(tt_emb)])
+        z = MLP_layers(dense, all_emb)
+
         E = loss_fn(z, label)
 
         optimizer.zero_grad()
@@ -63,7 +66,10 @@ def mlp_process(num_iters, warm_up_iters, emb_q, grad_q, MLP_layers, loss_fn, op
         label, sparse, dense = train_iter.next()
         emb.requires_grad = True
         
-        z = MLP_layers(dense, emb)
+        tt_emb = TT_tables(sparse)
+        all_emb = torch.cat([emb,torch.stack(tt_emb)])
+        z = MLP_layers(dense, all_emb)
+
         E = loss_fn(z, label)
 
         optimizer.zero_grad()
@@ -86,18 +92,23 @@ if __name__ == "__main__":
         dense_num = 2
         top_num = 226
         table_length = [8, 4680, 7567, 27, 8380, 550, 36, 2512738, 6385037, 8165, 6, 5, 2621, 9, 10, 434, 5, 69, 173, 61]
+        threshold = 3000000
+
     elif dataset == "kaggle" or dataset == "kaggle_reordered":
         table_num = 26
         feature_size = 16
         dense_num = 13
         top_num = 367
         table_length = [1461, 581, 9214729, 2031648, 306, 24, 12471, 634, 4, 90948, 5633, 7607629, 3183, 28, 14825, 4995567, 11, 5606, 2172, 4, 6431684, 18, 16, 272266, 105, 138045]
+        threshold = 8000000
+
     elif dataset == "terabyte" or dataset == "terabyte_reordered":
         table_num = 26
         feature_size = 64
         dense_num = 13
         top_num = 415
         table_length = [33121475, 30875, 15297, 7296, 19902, 4, 6519, 1340, 63, 20388174, 945108, 253624, 11, 2209, 10074, 75, 4, 964, 15, 39991895, 7312994, 28182799, 347447, 11111, 98, 35]
+        threshold = 35000000
 
     batch_size = 4096
     train_iter = in_memory_dataloader(batch_size, 0, dataset=dataset)
@@ -114,6 +125,14 @@ if __name__ == "__main__":
         feature_size,
         table_length,
         device,
+        threshold
+    )
+
+    TT_tables = TT_Tables(
+        feature_size,
+        table_length,
+        device,
+        threshold
     )
 
     MLP_layers = MLP_Layers(
@@ -134,7 +153,7 @@ if __name__ == "__main__":
 
     num_iters = 1000
     warm_up_iters = 200
-    p1 = mp.Process(target=mlp_process, args=(num_iters, warm_up_iters, emb_q, grad_q, MLP_layers, loss_fn, optimizer, train_iter))
+    p1 = mp.Process(target=mlp_process, args=(num_iters, warm_up_iters, emb_q, grad_q, MLP_layers, loss_fn, optimizer, train_iter, TT_tables))
 
     print("start train")
     p1.start()
@@ -167,7 +186,7 @@ if __name__ == "__main__":
 
             recv_cnt += 1
             del grad
-
+            
     p1.join()
     end = time_wrap()
     print("time:",end-start)

@@ -148,7 +148,7 @@ class EMB_Tables(nn.Module):
         idx = 0
         grad = grad * learning_rate
         for i in self.emb_idx:
-            scatter(grad[i], inverse[i], dim=0, out=receive_emb_list[i],reduce="sum")
+            scatter(grad[idx], inverse[i], dim=0, out=receive_emb_list[i],reduce="sum")
             self.emb_l[idx].weight.data[unique[i]] = receive_emb_list[i][0:len(unique[i])].cpu()
             receive_emb_list[i].zero_()
             idx += 1
