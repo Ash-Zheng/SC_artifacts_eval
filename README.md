@@ -153,7 +153,7 @@ cd /workspace/SC_artifacts_eval/rabbit_module/
 
 ### Reference
 We use some codes from the following repos:
-* [Facebool DLRM](https://github.com/facebookresearch/dlrm) 
+* [Facebook DLRM](https://github.com/facebookresearch/dlrm) 
 * [FAE](https://github.com/Lab-Gattaca-UBC/Accelerating-RecSys-Training)
 * [TT-Rec](https://github.com/facebookresearch/FBTT-Embedding)
 * [TorchRec](https://github.com/pytorch/torchrec)
