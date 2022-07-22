@@ -151,7 +151,7 @@ cd /workspace/SC_artifacts_eval/rabbit_module/
 ./3_save_training_data.sh
 ```
 
-### Reference
+## Reference
 We use some codes from the following repos:
 * [Facebook DLRM](https://github.com/facebookresearch/dlrm) 
 * [FAE](https://github.com/Lab-Gattaca-UBC/Accelerating-RecSys-Training)
