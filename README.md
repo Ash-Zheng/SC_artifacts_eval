@@ -1,7 +1,6 @@
 # EL-Rec: Efficient Large-scale Recommendation Model Training via Tensor-train Embedding Table
 
-[![DOI](https://zenodo.org/badge/498582840.svg)](https://zenodo.org/badge/latestdoi/498582840)
-This repo is for the SC 2022 artifacts evaluation.
+This repo is for the SC 2022 artifacts evaluation. [![DOI](https://zenodo.org/badge/498582840.svg)](https://zenodo.org/badge/latestdoi/498582840)
 
 
 ## Environment Setup and Preprocessing
