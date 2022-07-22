@@ -22,17 +22,29 @@ We provoded some script to run the expriment and get the result in our paper, in
   * We provide codes for running DLRM (1 GPU), DLRM (4 GPU), EL-Rec (1 GPU) and EL-Rec (4 GPU).
   * Please also refer to the `Figure12/README.md`.
 * Figure 13:
-  * We provide codes for running EL-Rec (1/2/4 GPU) and HugeCTR (2/4 GPU).
+  * We provide codes for running EL-Rec (1/2/4 GPU), TorchRec(2/4 GPU) and HugeCTR (2/4 GPU).
   * To run the EL-Rec, please use the docker container `SC_artifacts`.
   * To run the HugeCTR, please use the docker container `SC_ae_hugectr`.
+  * To run the HugeCTR, please use the conda environment `new_torchrec`.
   * Please also refer to the `Figure13/README.md`.
 * Figure 14:
   * We provide codes to get the breakdown study of EL-Rec.
   * Please also refer to the `Figure14/README.md`.
+* Figure 15:
+  * We provide codes to draw the loss convergence curve of DLRM, TT-Rec and EL-Rec.
+  * Please also refer to the `Figure15/README.md`.
 * Figure 16:
   * We provide codes for running DLRM, EL-Rec (Sequential) and EL-Rec (Pipeline).
   * Please also refer to the `Figure16/README.md`.
-
+* Figure 17:
+  * We provide codes to get the breakdown study of Efficient TT-table lookup.
+  * Please also refer to the `Figure17/README.md`.
+* Figure 18:
+  * We provide codes to get the breakdown study of Efficient TT-table backward.
+  * Please also refer to the `Figure18/README.md`.
+* Table 4:
+  * We provide codes to get the test accuracy of different frameworks.
+  * Please also refer to the `Table4/README.md`.
 
 
 ## Docker Image 
