@@ -2,6 +2,8 @@ import os
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
+plt.style.use('seaborn-notebook')
+
 config = {
     "font.family":'serif',
     "font.size": 16,
@@ -55,18 +57,26 @@ with open('loss_record/loss.txt') as f:
 
     plt.figure(figsize=(10,6), tight_layout=True)
     # #plotting
-    plt.plot(x, DLRM_list, '-', linewidth=1)
-    plt.plot(x, TT_Rec_list, '-', linewidth=1)
-    plt.plot(x, EL_Rec_list, '-', linewidth=1)
+    plt.figure(figsize=(10,4.5), tight_layout=True)
+    # #plotting
+    plt.plot(x, DLRM_list, '-', linewidth=1,c='g')
+    plt.plot(x, TT_Rec_list, '-', linewidth=1,c='y')
+    plt.plot(x, EL_Rec_list, '-', linewidth=1, c='steelblue')
+
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
 
     plt.ylim([0.3, 0.6])
 
     #customization
-    plt.xlabel('Loss', font1)
-    plt.ylabel('Iterations', font1)
+    plt.xlabel('Iterations', font1)
+    plt.ylabel('Loss', font1)
     # plt.title('Rating troughtout the years')
-    leg = plt.legend(title_fontsize = 13, labels=['DLRM', 'TT-Rec', 'EL-Rec'])
+    leg = plt.legend(fontsize = 14, labels=['DLRM', 'TT-Rec', 'EL-Rec'])
+
+    # plt.legend(title_fontsize = 16, labels=['DLRM', 'TT-Rec', 'EL-Rec'])
 
     for legobj in leg.legendHandles:
         legobj.set_linewidth(3.0)
     plt.savefig('loss.png')
+
